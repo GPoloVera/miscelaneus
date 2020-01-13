@@ -1,0 +1,36 @@
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+export PATH="$PATH:$HOME/.rvm/bin"
+
+export BASH_COMPLETION_COMPAT_DIR="/usr/local/etc/bash_completion.d"
+[[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"
+
+if which pyenv > /dev/null; then eval "$(pyenv init -)"; fi
+
+export NVM_DIR="/Users/gonzalopolo/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+
+# <<<<<<<<<<<< Aliases
+# Standard Aliases
+alias rm='rm -i'
+
+# More customized alias
+alias cdfi='cd ~/Projects/fintep_platform'
+alias cdsy='cdfi;cd syndtracker'
+# <<<<<<<<<<<<< End Aliases
+
+# Show current git branch in command line
+parse_git_branch() {
+     git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+}
+export PS1="\[\033[32m\]\w\[\033[33m\]\$(parse_git_branch)\[\033[00m\] $ "
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+# <<<<<< History tunning parameters >>>>>>>>
+export HISTSIZE=1000000
+export FILESIZE=1000000
+export HISTTIMEFORMAT="%h %d %H:%M:%S "
+shopt -s histappend
+PROMPT_COMMAND='history -a' # Variable that sets what to execute after Bash displays a prompt, this stores the history after each execution not at the end of the session
+export HISTIGNORE="ls:ps:history" # Ignore ls ps and history commands
+# <<<<<<<<< End os History tunning
