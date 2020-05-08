@@ -1,0 +1,29 @@
+#!/usr/bin/sh
+
+# Script que recibe un directorio  como primer argumento y lo que hace es unir todos los csv's en uno solo,
+# asumiendo que todas las cabeceras son iguales!!!! Como segundo argumento un "CorregirGuiones" para eliminar los guiones 
+# medios de la cabecera y pasarlos a puntos (Del Access de Roberto que vienen con guiones en lugar de con puntos)
+
+match="-"
+replace="."
+
+let i=0
+for file in $1/*.csv
+do
+    let i++
+    if [ $i -eq 1 ] 
+    then
+	header_aux=`head -n 1 $file`
+	if [ "$#" -gt 1 ] && [ $2 = "CorregirGuiones" ]
+        then
+		header=${header_aux//$match/$replace}
+	else
+		header=$header_aux
+	fi
+	echo $header > Agregated.csv
+    fi 
+	
+    tail -n +2 $file >> Agregated.csv
+
+done
+

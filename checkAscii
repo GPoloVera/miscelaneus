@@ -1,0 +1,28 @@
+#!/usr/bin/sh
+
+# Commandos para detectar no Ascii
+# 1. LC_ALL=C grep '[^ -~]' file.xml => La RegExp es para todo lo que no esta en tre el " " y el ~, el LC_ALL para un tema de characteres multibyte
+# 2. grep --color='auto' -P -n '[^\x00-\x7F]' file.xml, asi pinta todo lo que no esté entre 0 y 127 pero a veces no funciona, los multibyte no los detectara etc.
+
+if [ "$#" -lt 1 ]; then
+	echo "Se requieren minimo 1 argumento:"
+	echo -e "\t 1.Archivo a chequear"
+	exit 1
+elif [ ! -s $1  ]; then
+	echo "El archivo < $1 > no existe o esta vacio"
+	exit 1
+fi
+
+check=$(grep -P -n '[^\x00-\x7F]' $1)
+if [[ $check ]]; then
+	echo "Check \"grep -P -n '[^\x00-\x7F])'\" indica que hay caracteres no Ascii: Archivo $1"
+	echo "$check"
+fi
+
+check=$(LC_ALL=C grep '[^ -~]' $1)
+if [[ $check ]]; then
+	echo "Check \"LC_ALL=C grep '[^ -~]'\" indica caracteres no Ascii: Archivo $1"
+	echo "$check"
+fi
+
+exit 0

@@ -1,0 +1,85 @@
+#!/usr/bin/sh
+
+# Commandos para detectar no Ascii
+# 1. LC_ALL=C grep '[^ -~]' file.xml => La RegExp es para todo lo que no esta en tre el " " y el ~, el LC_ALL para un tema de characteres multibyte
+# 2. grep --color='auto' -P -n '[^\x00-\x7F]' file.xml, asi pinta todo lo que no esté entre 0 y 127 pero a veces no funciona, los multibyte no los detectara etc.
+
+if [ "$#" -lt 1 ]; then
+	echo "Se requieren minimo 1 argumento:"
+	echo -e "\t 1.Archivo a convertir (el encodig lo detecta con file automaticamente)"
+	echo -e "\t 2.(Opcional)Encoding => Si se pone un Encodig probara con ese directamente"
+	exit 1
+elif [ ! -s $1  ]; then
+	echo "El archivo < $1 > no existe o esta vacio"
+	exit 1
+fi
+
+
+encodingAux=`file -bi $1 | awk '{print $2}' | awk -F= '{print $2}'`
+
+if [ ! -z "$2" ];then
+	encodingAux="inputArgument"
+fi
+
+
+case "$encodingAux" in
+	utf-8)
+		encoding="UTF-8"
+		;;
+	utf8)
+		encoding="UTF-8"
+		;;
+	UTF8)
+		encoding="UTF-8"
+		;;
+	iso-8859-1)
+		encoding="ISO_8859-1"
+		;;
+	latin1)
+		encoding="LATIN1"
+		;;
+	latin-1)
+		encoding="LATIN1"
+		;;
+	*ascii)
+		encoding="NOTRANS"
+		;;
+	inputArgument)
+		encoding="$2"
+		;;
+	*)
+		encoding="NORECONOCIDO"
+		echo -e "Encoding $encodingAux no reconocido en el programa"
+		exit 1
+		
+esac	
+nLinesPre=`cat $1 | wc -l`
+nLinesPro=`tr -d \'\r\' < $1 | wc -l`
+if [ "$nLinesPre" -ne "$nLinesPro" ]; then
+	echo -e "\n No coincide el numero de lineas ($nLinesPre != $nLinesPro) tras intentar quitar el CR de Windows y dejar solo LF de Unix"
+	exit 2
+else
+	tr -d '\r' < $1 > $1.lf
+	outFile=$1.lf
+fi
+
+
+
+if [ "$encoding" == "NOTRANS" ]; then
+
+	cat $outFile
+else
+	iconv -f $encoding -t ASCII//TRANSLIT $outFile #> $outFile.ascii
+fi
+
+if [ "$?" -ne 0 ]; then
+	echo -e "Fallo en la conversion con encoding $encoding. Boorado de archivo $outFile.ascii"
+	rm -f $outFile.ascii $outFile
+	exit 3
+fi
+
+# Borrado del archivo intermedio con extension lf sin la parte de ascii
+rm -f $outFile 
+
+exit 0
+
