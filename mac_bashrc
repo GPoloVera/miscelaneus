@@ -34,3 +34,6 @@ shopt -s histappend
 PROMPT_COMMAND='history -a' # Variable that sets what to execute after Bash displays a prompt, this stores the history after each execution not at the end of the session
 export HISTIGNORE="ls:ps:history" # Ignore ls ps and history commands
 # <<<<<<<<< End os History tunning
+
+# Adding utilities to PATH (things like Git with Jupyter notebook... etc.)
+export PATH="$PATH:$HOME/utilities"
