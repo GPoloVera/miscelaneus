@@ -26,6 +26,8 @@ def strip_output_from_cell(cell):
         cell["outputs"] = []
     if "execution_count" in cell: # The execution_count is always removed (if filtering is "activated")
         cell["execution_count"] = None
+    if "ExecuteTime" in cell: # The ExecuteTime comes from the extension ExecuteTime
+        cell["ExecuteTime"] = None
 
 
 if ipy_version == 2:
