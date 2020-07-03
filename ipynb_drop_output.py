@@ -18,9 +18,13 @@ if not suppress_output:
 ipy_version = int(json_in["nbformat"])-1 # nbformat is 1 more than actual version.
 
 def strip_output_from_cell(cell):
-    if "outputs" in cell:
+    keep_output = False
+    if "cell_type" in cell and cell["cell_type"]=="code":
+        if cell["source"] and cell["source"][0]=="#__keep_output__\n": # First line flag to indicate to keep this output (for not empty cells)
+            keep_output = True
+    if "outputs" in cell and not keep_output:
         cell["outputs"] = []
-    if "execution_count" in cell:
+    if "execution_count" in cell: # The execution_count is always removed (if filtering is "activated")
         cell["execution_count"] = None
 
 
