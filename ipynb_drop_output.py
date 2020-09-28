@@ -26,9 +26,15 @@ def strip_output_from_cell(cell):
         cell["outputs"] = []
     if "execution_count" in cell: # The execution_count is always removed (if filtering is "activated")
         cell["execution_count"] = None
-    if "metadata" in cell and "ExecuteTime" in cell["metadata"]: # The ExecuteTime comes from the extension ExecuteTime
-        cell["metadata"]["ExecuteTime"] = None
-
+    if "metadata" in cell:
+        if "ExecuteTime" in cell["metadata"]: # The ExecuteTime comes from the extension ExecuteTime
+            cell["metadata"]["ExecuteTime"] = None
+        if "hidden" in cell["metadata"]:
+            cell["metadata"]["hidden"] = True # By default left the cells hidden (need to push the arrow to unfold again)
+        if "collapsed" in cell["metadata"]:
+            cell["metadata"]["collapsed"] = False # This refers to collapse the output, if the output is kept then is left
+        if "scrolled" in cell["metadata"]:
+            cell["metadata"]["scrolled"] = False # This referes to scrolling ling outputs, if output is left, by default with no scrolling
 
 if ipy_version == 2:
     for sheet in json_in["worksheets"]:
