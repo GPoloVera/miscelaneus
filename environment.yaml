@@ -1,8 +1,8 @@
 name: miscelaneus_env
-channels:
-  - plotly
 dependencies:
-  - numpy
-  - numpy_financial
-  - pandas
-  - plotly
+  - pip
+  - pip:
+    - numpy
+    - numpy-financial
+    - pandas
+    - plotly
