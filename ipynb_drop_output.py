@@ -12,7 +12,7 @@ if "git" in nb_metadata:
         suppress_output = False
 if not suppress_output:
     sys.stdout.write(nb)
-    exit() 
+    exit()
 
 
 ipy_version = int(json_in["nbformat"])-1 # nbformat is 1 more than actual version.
@@ -29,12 +29,9 @@ def strip_output_from_cell(cell):
     if "metadata" in cell:
         if "ExecuteTime" in cell["metadata"]: # The ExecuteTime comes from the extension ExecuteTime
             cell["metadata"]["ExecuteTime"] = None
-        if "hidden" in cell["metadata"]:
-            cell["metadata"]["hidden"] = True # By default left the cells hidden (need to push the arrow to unfold again)
-        if "collapsed" in cell["metadata"]:
-            cell["metadata"]["collapsed"] = False # This refers to collapse the output, if the output is kept then is left
-        if "scrolled" in cell["metadata"]:
-            cell["metadata"]["scrolled"] = False # This referes to scrolling ling outputs, if output is left, by default with no scrolling
+        cell["metadata"]["hidden"] = True # By default force the cells hidden (need to push the arrow to unfold again)
+        cell["metadata"]["collapsed"] = False # This refers to collapse the output, if the output is kept then is left, force to be collapsed False
+        cell["metadata"]["scrolled"] = False # This referes to scrolling outputs, if output is left, by default with no scrolling
 
 if ipy_version == 2:
     for sheet in json_in["worksheets"]:
